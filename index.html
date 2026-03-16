@@ -1,0 +1,1818 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pro Line — გზების განსაზღვრა, ქალაქების წარმართვა</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans+Georgian:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&family=Work+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --charcoal: #2D2D2D;
+      --teal: #D4A017;
+      --teal-dark: #B8860B;
+      --teal-light: #E8B930;
+      --white: #FFFFFF;
+      --gray-light: #F5F5F5;
+      --gray-mid: #E0E0E0;
+      --gray-text: #9E9E9E;
+      --font-body: 'Inter', 'Noto Sans Georgian', sans-serif;
+      --font-heading: 'Poppins', 'Noto Sans Georgian', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      color: var(--charcoal);
+      line-height: 1.6;
+      background: var(--white);
+    }
+
+    /* ---------- HEADER / NAV ---------- */
+    header {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: transparent;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      margin-left: -48px;
+    }
+
+    .logo img {
+      height: 150px;
+      width: auto;
+      margin-top: -16px;
+    }
+
+
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      flex: 1;
+      justify-content: center;
+      gap: 56px;
+      margin-top: -20px;
+    }
+
+    .nav-links a {
+      color: var(--gray-mid);
+      text-decoration: none;
+      font-size: 0.90rem;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      transition: color 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+
+    .nav-links a:hover { color: var(--teal-light); }
+
+    /* ---------- LANGUAGE SWITCHER ---------- */
+    .lang-switcher {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      margin-left: 24px;
+      margin-top: -20px;
+    }
+
+    .lang-switcher button {
+      background: none;
+      border: none;
+      color: var(--gray-text);
+      font-family: var(--font-body);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 5px 10px;
+      border-radius: 4px;
+      transition: color 0.2s, background 0.2s;
+      letter-spacing: 0.3px;
+    }
+
+    .lang-switcher button.active {
+      color: var(--teal-light);
+      background: rgba(77, 182, 172, 0.15);
+    }
+
+    .lang-switcher button:hover:not(.active) {
+      color: var(--white);
+    }
+
+    .lang-switcher .sep {
+      color: var(--gray-text);
+      font-size: 0.82rem;
+      user-select: none;
+    }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--white);
+      border-radius: 2px;
+      transition: transform 0.3s, opacity 0.3s;
+    }
+
+    .hamburger.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.active span:nth-child(2) { opacity: 0; }
+    .hamburger.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* ---------- HERO ---------- */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      overflow: hidden;
+      background: #1a1a1a;
+    }
+
+    /* Background videos (two copies for seamless crossfade loop) */
+    .hero-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      z-index: 0;
+      transition: opacity 1.5s ease;
+    }
+
+    .hero-video.hidden { opacity: 0; }
+
+    /* Dark overlay for text readability */
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background:
+        radial-gradient(ellipse at 50% 50%, rgba(15,15,15,0.25) 0%, rgba(15,15,15,0.4) 70%),
+        linear-gradient(180deg, rgba(26,26,26,0.2) 0%, rgba(26,26,26,0.15) 40%, rgba(26,26,26,0.3) 100%);
+    }
+
+    .hero-content {
+      position: absolute;
+      z-index: 2;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      transform: translateX(-50%);
+      max-width: 720px;
+      width: 100%;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero h1.hero-rotating {
+      font-family: 'Work Sans', var(--font-heading);
+      font-size: 3.5rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--white);
+      text-shadow: 0 2px 12px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.6), 0 0 80px rgba(0,0,0,0.4);
+      line-height: 1.2;
+      margin-top: 0;
+      margin-bottom: 0;
+      min-height: 2.4em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-rotating .rotate-word {
+      display: block;
+      color: var(--white);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .hero-rotating .rotate-word.fade-out {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+
+    .hero-rotating .rotate-word.fade-in-up {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 14px 36px;
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--teal);
+      color: var(--white);
+    }
+
+    .btn-primary:hover {
+      background: var(--teal-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,137,123,0.35);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--teal);
+      border: 2px solid var(--teal);
+    }
+
+    .btn-outline:hover {
+      background: var(--teal);
+      color: var(--white);
+    }
+
+    /* ---------- SECTIONS (shared) ---------- */
+    .section {
+      padding: 96px 24px;
+    }
+
+    .section-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: 2.25rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .section-subtitle {
+      text-align: center;
+      color: #666;
+      max-width: 560px;
+      margin: 0 auto 56px;
+      font-size: 1.05rem;
+    }
+
+    .bg-light { background: var(--gray-light); }
+
+    /* ---------- ABOUT US ---------- */
+    .about-section {
+      background: var(--charcoal);
+      padding: 96px 24px;
+    }
+
+    .about-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 48px;
+    }
+
+    .about-top {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 64px;
+      align-items: start;
+    }
+
+    .about-logos {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      justify-content: flex-start;
+      align-items: center;
+      margin-top: 16px;
+    }
+
+    .about-logos .logo-frame {
+      width: 150px;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 8px;
+      transition: border-color 0.3s;
+    }
+
+    .about-logos .logo-frame:hover {
+      border-color: var(--teal);
+    }
+
+    .about-logos .logo-frame img {
+      max-width: 110px;
+      max-height: 45px;
+      object-fit: contain;
+      object-position: center;
+      opacity: 0.85;
+      transition: opacity 0.3s;
+      filter: brightness(0) invert(1);
+    }
+
+    .about-logos .logo-frame:hover img {
+      opacity: 1;
+    }
+
+    .about-label {
+      display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--teal);
+      margin-bottom: 12px;
+    }
+
+    .about-heading {
+      font-family: var(--font-heading);
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.2;
+      margin-bottom: 20px;
+    }
+
+    .about-accent-line {
+      width: 60px;
+      height: 3px;
+      background: var(--teal);
+      border-radius: 2px;
+      margin-bottom: 28px;
+    }
+
+    .about-intro {
+      color: rgba(255,255,255,0.7);
+      font-size: 1.05rem;
+      line-height: 1.85;
+    }
+
+    .about-right {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-self: end;
+    }
+
+    .about-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 24px 28px;
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+      transition: background 0.3s, border-color 0.3s;
+    }
+
+    .about-card:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: var(--teal);
+    }
+
+    .about-card-icon {
+      font-size: 1.6rem;
+      color: var(--teal);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .about-card p {
+      color: rgba(255,255,255,0.65);
+      font-size: 0.93rem;
+      line-height: 1.7;
+    }
+
+    .about-partners-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 4px;
+      justify-content: flex-start;
+    }
+
+    .partner-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(212,160,23,0.12);
+      border: 1px solid rgba(212,160,23,0.25);
+      color: var(--teal-light);
+      padding: 6px 11px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .partner-tag:hover {
+      background: rgba(212,160,23,0.22);
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+      .about-top {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+      .about-heading { font-size: 1.8rem; }
+    }
+
+    /* ---------- SERVICES ---------- */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 28px;
+    }
+
+    .service-card {
+      background: var(--white);
+      border-radius: 10px;
+      padding: 36px 28px;
+      border: 1px solid var(--gray-mid);
+      border-top: 3px solid transparent;
+      transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+    }
+
+    .service-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.1);
+      border-top-color: var(--teal);
+    }
+
+    .service-icon {
+      font-size: 2.4rem;
+      margin-bottom: 18px;
+      display: inline-block;
+      color: var(--teal);
+    }
+
+    .service-card h3 {
+      font-family: var(--font-heading);
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .service-card p {
+      color: #555;
+      font-size: 0.92rem;
+      margin-bottom: 18px;
+      line-height: 1.6;
+    }
+
+    .service-card a {
+      color: var(--teal);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+
+    .service-card a:hover { color: var(--teal-dark); }
+
+    /* ---------- INDUSTRIES ---------- */
+    .industries-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+
+    .industry-card {
+      background: var(--white);
+      border-radius: 10px;
+      padding: 32px 28px;
+      text-align: center;
+      border: 1px solid var(--gray-mid);
+      transition: background 0.3s, color 0.3s, transform 0.25s, box-shadow 0.25s;
+      cursor: default;
+    }
+
+    .industry-card:hover {
+      background: var(--teal);
+      transform: translateY(-4px);
+      box-shadow: 0 10px 28px rgba(0,137,123,0.25);
+      border-color: var(--teal);
+    }
+
+    .industry-card:hover .industry-icon,
+    .industry-card:hover h3,
+    .industry-card:hover p {
+      color: var(--white);
+    }
+
+    .industry-icon {
+      font-size: 2.2rem;
+      color: var(--teal);
+      margin-bottom: 14px;
+      display: inline-block;
+      transition: color 0.3s;
+    }
+
+    .industry-card h3 {
+      font-family: var(--font-heading);
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      transition: color 0.3s;
+    }
+
+    .industry-card p {
+      color: #666;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      transition: color 0.3s;
+    }
+
+    /* ---------- STATS ---------- */
+    .stats-section {
+      background: var(--charcoal);
+      padding: 72px 24px;
+    }
+
+    .stats-bar {
+      max-width: 1000px;
+      margin: 0 auto 48px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      text-align: center;
+    }
+
+    .stat-item h3 {
+      font-family: var(--font-heading);
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--teal-light);
+      margin-bottom: 6px;
+    }
+
+    .stat-item p {
+      color: var(--gray-mid);
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    .stats-description {
+      max-width: 680px;
+      margin: 0 auto;
+      text-align: center;
+      color: var(--gray-mid);
+      font-size: 1.05rem;
+      line-height: 1.8;
+    }
+
+    /* ---------- PROJECTS ---------- */
+    #projects .section-inner {
+      max-width: 1400px;
+    }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .project-card {
+      background: var(--white);
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--gray-mid);
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+
+    .project-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 28px rgba(0,0,0,0.1);
+    }
+
+    /* Carousel */
+    .project-carousel {
+      position: relative;
+      width: 100%;
+      height: 280px;
+      overflow: hidden;
+      touch-action: pan-y;
+    }
+
+    .carousel-track {
+      display: flex;
+      height: 100%;
+      transition: transform 0.35s ease;
+    }
+
+    .carousel-track img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      flex-shrink: 0;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.45);
+      color: var(--white);
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.2s;
+      z-index: 2;
+    }
+
+    .project-carousel:hover .carousel-btn { opacity: 1; }
+
+    .carousel-btn.prev { left: 8px; }
+    .carousel-btn.next { right: 8px; }
+
+    .carousel-dots {
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 6px;
+      z-index: 2;
+    }
+
+    .carousel-dots span {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.5);
+      transition: background 0.2s;
+    }
+
+    .carousel-dots span.active {
+      background: var(--white);
+    }
+
+    .project-body {
+      padding: 18px 22px;
+    }
+
+    .project-card h3 {
+      font-family: var(--font-heading);
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--charcoal);
+    }
+
+    /* ---------- LIGHTBOX ---------- */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(0,0,0,0.92);
+      align-items: center;
+      justify-content: center;
+    }
+
+    .lightbox.open {
+      display: flex;
+    }
+
+    .lightbox img {
+      max-width: 90vw;
+      max-height: 90vh;
+      object-fit: contain;
+      border-radius: 6px;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 20px;
+      right: 28px;
+      background: none;
+      border: none;
+      color: var(--white);
+      font-size: 2.2rem;
+      cursor: pointer;
+      line-height: 1;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+      z-index: 10000;
+    }
+
+    .lightbox-close:hover { opacity: 1; }
+
+    .lightbox-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,0.12);
+      border: none;
+      color: var(--white);
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      font-size: 1.4rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+      z-index: 10000;
+    }
+
+    .lightbox-nav:hover { background: rgba(255,255,255,0.25); }
+
+    .lightbox-nav.prev { left: 20px; }
+    .lightbox-nav.next { right: 20px; }
+
+    .lightbox-counter {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255,255,255,0.6);
+      font-size: 0.9rem;
+      font-family: var(--font-body);
+    }
+
+    /* ---------- NEWSLETTER ---------- */
+    .newsletter {
+      background: linear-gradient(135deg, #1a1a1a 0%, #2D2D2D 50%, #3a3a3a 100%);
+      padding: 80px 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .newsletter::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at 30% 50%, rgba(212,160,23,0.06) 0%, transparent 50%),
+                  radial-gradient(circle at 70% 50%, rgba(232,185,48,0.04) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .newsletter h2 {
+      font-family: var(--font-heading);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 10px;
+      position: relative;
+    }
+
+    .newsletter p {
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 32px;
+      font-size: 1.02rem;
+      position: relative;
+    }
+
+    .newsletter-form {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      max-width: 480px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .newsletter-form input {
+      flex: 1;
+      padding: 14px 18px;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: var(--font-body);
+      outline: none;
+      background: rgba(255,255,255,0.08);
+      color: var(--white);
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .newsletter-form input::placeholder {
+      color: rgba(255,255,255,0.4);
+    }
+
+    .newsletter-form input:focus {
+      border-color: var(--teal);
+      background: rgba(255,255,255,0.12);
+    }
+
+    .newsletter-form button {
+      padding: 14px 28px;
+      background: var(--teal);
+      color: var(--charcoal);
+      border: none;
+      border-radius: 8px;
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .newsletter-form button:hover {
+      background: var(--teal-light);
+      transform: translateY(-2px);
+    }
+
+    /* ---------- FOOTER ---------- */
+    footer {
+      background: var(--charcoal);
+      color: var(--gray-mid);
+      padding: 64px 24px 0;
+    }
+
+    .footer-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
+      gap: 40px;
+      padding-bottom: 48px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .footer-col h4 {
+      font-family: var(--font-heading);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 18px;
+    }
+
+    .footer-col p {
+      font-size: 0.88rem;
+      line-height: 1.7;
+      margin-bottom: 10px;
+    }
+
+    .footer-col ul {
+      list-style: none;
+    }
+
+    .footer-col ul li { margin-bottom: 10px; }
+
+    .footer-col ul a {
+      color: var(--gray-text);
+      text-decoration: none;
+      font-size: 0.88rem;
+      transition: color 0.2s;
+    }
+
+    .footer-col ul a:hover { color: var(--teal-light); }
+
+    .footer-social {
+      display: flex;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .footer-social a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+      color: var(--gray-mid);
+      text-decoration: none;
+      font-size: 1rem;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .footer-social a:hover {
+      background: var(--teal);
+      color: var(--white);
+    }
+
+    .footer-bottom {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 0;
+      text-align: center;
+      font-size: 0.82rem;
+      color: var(--gray-text);
+    }
+
+    /* ---------- RESPONSIVE ---------- */
+    @media (max-width: 1024px) {
+      .services-grid { grid-template-columns: repeat(2, 1fr); }
+      .industries-grid { grid-template-columns: repeat(2, 1fr); }
+      .projects-grid { grid-template-columns: repeat(2, 1fr); }
+      .project-carousel { height: 240px; }
+      .footer-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 768px) {
+      .hamburger { display: flex; }
+
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 64px;
+        left: 0;
+        right: 0;
+        background: rgba(26,26,26,0.9);
+        backdrop-filter: blur(10px);
+        flex-direction: column;
+        gap: 0;
+        padding: 8px 0;
+        border-top: 1px solid rgba(255,255,255,0.1);
+      }
+
+      .nav-links.open { display: flex; }
+
+      .nav-links li { padding: 12px 24px; }
+
+      .hero h1.hero-rotating { font-size: 2.4rem; }
+
+      .services-grid { grid-template-columns: 1fr; }
+      .industries-grid { grid-template-columns: 1fr; }
+      .projects-grid { grid-template-columns: 1fr; }
+      .stats-bar { grid-template-columns: repeat(2, 1fr); }
+
+      .section { padding: 64px 20px; }
+      .section-title { font-size: 1.8rem; }
+
+      .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+
+      .newsletter-form {
+        flex-direction: column;
+      }
+
+      .newsletter-form input,
+      .newsletter-form button {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero h1.hero-rotating { font-size: 1.9rem; }
+      .stats-bar { grid-template-columns: 1fr 1fr; gap: 32px 16px; }
+      .stat-item h3 { font-size: 2rem; }
+    }
+
+    /* ---------- FADE-IN ANIMATION ---------- */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== HEADER ==================== -->
+  <header>
+    <nav class="nav-container">
+      <a href="#" class="logo"><img src="logo nobg.png" alt="Pro Line Road Marking"></a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#services" data-i18n="nav_services">Services</a></li>
+        <li><a href="#about" data-i18n="nav_about">About Us</a></li>
+        <li><a href="#projects" data-i18n="nav_projects">Projects</a></li>
+        <li><a href="#industries" data-i18n="nav_industries">Industries</a></li>
+        <li><a href="#contact" data-i18n="nav_contact">Contact</a></li>
+      </ul>
+      <div class="lang-switcher">
+        <button id="langGeo" class="active">GEO</button>
+        <span class="sep">/</span>
+        <button id="langEng">ENG</button>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Toggle navigation">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- ==================== HERO ==================== -->
+    <section class="hero" id="hero">
+
+      <video class="hero-video" id="vidA" muted playsinline>
+        <source src="tbilisi4.mp4" type="video/mp4">
+      </video>
+      <video class="hero-video hidden" id="vidB" muted playsinline>
+        <source src="tbilisi4.mp4" type="video/mp4">
+      </video>
+      <div class="hero-overlay"></div>
+
+      <div class="hero-content">
+        <h1 class="hero-rotating" aria-live="polite" id="heroRotating">
+          <span class="rotate-word" data-i18n="rotate1">ჰორიზონტალური საგზაო მონიშვნა</span>
+        </h1>
+        <p style="color: rgba(255,255,255,0.85); font-size: 1.05rem; font-weight: 600; line-height: 1.8; max-width: 620px; margin: 120px auto 0; text-shadow: 0 2px 12px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.6), 0 0 80px rgba(0,0,0,0.4);" data-i18n="hero_desc_paragraph">შპს „პრო ლაინი" 2019 წლიდან ოპერირებს საქართველოს ბაზარზე და ახორციელებს საგზაო ინფრასტრუქტურის პროექტებს თანამედროვე ტექნოლოგიებისა და მაღალი ხარისხის მასალების გამოყენებით.</p>
+      </div>
+    </section>
+
+    <!-- ==================== SERVICES ==================== -->
+    <section class="section" id="services">
+      <div class="section-inner">
+        <h2 class="section-title fade-in" data-i18n="services_title">What We Do</h2>
+        <p class="section-subtitle fade-in" data-i18n="services_subtitle">Comprehensive road marking and signage solutions built on precision, compliance, and durability.</p>
+        <div class="services-grid">
+
+          <div class="service-card fade-in">
+            <div class="service-icon">&#9776;</div>
+            <h3 data-i18n="svc1_title">გზის მონიშვნა</h3>
+            <p data-i18n="svc1_desc">გზების ჰორიზონტალური მონიშვნა თანამედროვე ტექნოლოგიებით, რაც უზრუნველყოფს მოძრაობის უსაფრთხოებასა და მონიშვნის გამძლეობას.</p>
+          </div>
+
+          <div class="service-card fade-in">
+            <div class="service-icon">&#9641;</div>
+            <h3 data-i18n="svc2_title">პარკირების სივრცეების მოწყობა</h3>
+            <p data-i18n="svc2_desc">პარკირების სივრცეების დაგეგმვა და მონიშვნა კომერციული, მუნიციპალური და კერძო ობიექტებისთვის.</p>
+          </div>
+
+          <div class="service-card fade-in">
+            <div class="service-icon">&#9888;</div>
+            <h3 data-i18n="svc3_title">ნიშნების მონტაჟი</h3>
+            <p data-i18n="svc3_desc">მაღალი რეფლექტირებადი მასალებით დამზადებული საგზაო ნიშნების მონტაჟი მოქმედი სტანდარტების შესაბამისად.</p>
+          </div>
+
+          <div class="service-card fade-in">
+            <div class="service-icon">&#9706;</div>
+            <h3 data-i18n="svc4_title">ინფრასტრუქტურა და მოძრაობის მართვა</h3>
+            <p data-i18n="svc4_desc">სიჩქარის შემზღუდავები, პარკირების შემზღუდავები და სხვა უსაფრთხოების ელემენტები გზისა და პარკირების სივრცეებისთვის.</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== ABOUT US ==================== -->
+    <section class="about-section" id="about">
+      <div class="about-inner">
+        <div class="about-top fade-in">
+          <div class="about-left">
+            <h2 class="about-heading" data-i18n="about_title">ჩვენ შესახებ</h2>
+            <div class="about-accent-line"></div>
+            <p class="about-intro" data-i18n="about_intro">შპს „პრო ლაინი" 2019 წლიდან აქტიურად ოპერირებს საქართველოს ბაზარზე და სპეციალიზდება საგზაო მოძრაობის უსაფრთხოების სისტემებსა და ინფრასტრუქტურულ პროექტებში.</p>
+            <div class="about-card" style="margin-top: 24px; width: fit-content;">
+              <div class="about-card-icon">&#9881;</div>
+              <p data-i18n="about_activity">კომპანიის ძირითადი საქმიანობის მიმართულებებია გზების ჰორიზონტალური მონიშვნა, პარკირების სივრცეების მოწყობა, საგზაო ნიშნების დამზადება და მონტაჟი, ასევე საგზაო ინფრასტრუქტურის პროექტირება.</p>
+            </div>
+          </div>
+          <div class="about-right">
+            <div class="about-card">
+              <div class="about-card-icon">&#9733;</div>
+              <p data-i18n="about_quality">კომპანია მუდმივად მუშაობს თანამედროვე სტანდარტების დანერგვაზე და მომხმარებლებისთვის მაღალი ხარისხის მომსახურების შეთავაზებაზე.</p>
+            </div>
+            <div class="about-card">
+              <div class="about-card-icon">&#127760;</div>
+              <p data-i18n="about_partners">ჩვენი პარტნიორი ქვეყნები არიან: საფრანგეთი, ესპანეთი, თურქეთი, ბელარუსი და შვეიცარია. ევროპული გამოცდილების მქონე კომპანიებთან თანამშრომლობა გვაძლევს მნიშვნელოვან უპირატესობას, რომ ყველა პროექტი შესრულდეს უმაღლესი ხარისხის მასალებითა და თანამედროვე ტექნოლოგიების გამოყენებით.</p>
+            </div>
+            <div class="about-logos fade-in">
+              <div class="logo-frame"><img src="companylogo1.png" alt="Partner company 1"></div>
+              <div class="logo-frame"><img src="companylogo2_trimmed.png" alt="Partner company 2"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== PROJECTS ==================== -->
+    <section class="section bg-light" id="projects">
+      <div class="section-inner">
+        <h2 class="section-title fade-in" data-i18n="projects_title">Our Projects</h2>
+        <p class="section-subtitle fade-in" data-i18n="projects_subtitle">Cities and regions where we have delivered road marking and signage solutions.</p>
+        <div class="projects-grid">
+
+          <!-- Batumi -->
+          <div class="project-card fade-in">
+            <div class="project-carousel" data-carousel>
+              <div class="carousel-track">
+                <img src="batumi/batumi1.png" alt="Batumi project photo 1">
+                <img src="batumi/batumi2.png" alt="Batumi project photo 2">
+                <img src="batumi/batumi3.png" alt="Batumi project photo 3">
+                <img src="batumi/batumi4.jpeg" alt="Batumi project photo 4">
+                <img src="batumi/batumi5.jpeg" alt="Batumi project photo 5">
+                <img src="batumi/batumi6.jpeg" alt="Batumi project photo 6">
+                <img src="batumi/batumi7.jpeg" alt="Batumi project photo 7">
+              </div>
+              <button class="carousel-btn prev" aria-label="Previous">&#10094;</button>
+              <button class="carousel-btn next" aria-label="Next">&#10095;</button>
+              <div class="carousel-dots">
+                <span class="active"></span><span></span><span></span><span></span><span></span><span></span><span></span>
+              </div>
+            </div>
+            <div class="project-body">
+              <h3 data-i18n="project1_name">Batumi</h3>
+            </div>
+          </div>
+
+          <!-- Zugdidi -->
+          <div class="project-card fade-in">
+            <div class="project-carousel" data-carousel>
+              <div class="carousel-track">
+                <img src="zugdidi/zugdidi1.png" alt="Zugdidi project photo 1">
+                <img src="zugdidi/zugdidi2.png" alt="Zugdidi project photo 2">
+                <img src="zugdidi/zugdidi4.jpeg" alt="Zugdidi project photo 3">
+                <img src="zugdidi/zugdidi5.jpeg" alt="Zugdidi project photo 4">
+                <img src="zugdidi/zugdidi6.jpeg" alt="Zugdidi project photo 5">
+                <img src="zugdidi/zugdidi7.jpeg" alt="Zugdidi project photo 6">
+                <img src="zugdidi/zugdidi8.jpeg" alt="Zugdidi project photo 7">
+                <img src="zugdidi/zugdidi9.jpeg" alt="Zugdidi project photo 8">
+                <img src="zugdidi/zugdidi10.jpeg" alt="Zugdidi project photo 9">
+              </div>
+              <button class="carousel-btn prev" aria-label="Previous">&#10094;</button>
+              <button class="carousel-btn next" aria-label="Next">&#10095;</button>
+              <div class="carousel-dots">
+                <span class="active"></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+              </div>
+            </div>
+            <div class="project-body">
+              <h3 data-i18n="project2_name">ზუგდიდი</h3>
+            </div>
+          </div>
+
+          <!-- Placeholder card 3 -->
+          <div class="project-card fade-in">
+            <div class="project-carousel">
+              <div class="carousel-track">
+                <img src="" alt="" style="background:linear-gradient(135deg,var(--charcoal),#444);width:100%;height:100%;">
+              </div>
+            </div>
+            <div class="project-body">
+              <h3 data-i18n="project3_name">Coming Soon</h3>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== INDUSTRIES ==================== -->
+    <section class="section bg-light" id="industries">
+      <div class="section-inner">
+        <h2 class="section-title fade-in" data-i18n="industries_title">Industries We Serve</h2>
+        <p class="section-subtitle fade-in" data-i18n="industries_subtitle">From city streets to campus grounds, we deliver marking and signage solutions across diverse sectors.</p>
+        <div class="industries-grid">
+
+          <div class="industry-card fade-in">
+            <div class="industry-icon">&#127963;</div>
+            <h3 data-i18n="ind1_title">Municipal / Government</h3>
+            <p data-i18n="ind1_desc">City roads, highways, and public infrastructure projects with full regulatory compliance.</p>
+          </div>
+
+          <div class="industry-card fade-in">
+            <div class="industry-icon">&#127970;</div>
+            <h3 data-i18n="ind2_title">Commercial Properties</h3>
+            <p data-i18n="ind2_desc">Office parks, business complexes, and corporate campuses with professional-grade markings.</p>
+          </div>
+
+          <div class="industry-card fade-in">
+            <div class="industry-icon">&#127979;</div>
+            <h3 data-i18n="ind3_title">Educational Campuses</h3>
+            <p data-i18n="ind3_desc">School zones, crosswalks, bus lanes, and pedestrian safety markings for K-12 and universities.</p>
+          </div>
+
+          <div class="industry-card fade-in">
+            <div class="industry-icon">&#127973;</div>
+            <h3 data-i18n="ind4_title">Healthcare Facilities</h3>
+            <p data-i18n="ind4_desc">Hospital and clinic parking, emergency access lanes, and ADA-compliant wayfinding signage.</p>
+          </div>
+
+          <div class="industry-card fade-in">
+            <div class="industry-icon">&#128722;</div>
+            <h3 data-i18n="ind5_title">Retail &amp; Shopping Centers</h3>
+            <p data-i18n="ind5_desc">Customer parking, loading zones, cart corrals, and directional signage for retail properties.</p>
+          </div>
+
+          <div class="industry-card fade-in">
+            <div class="industry-icon">&#127968;</div>
+            <h3 data-i18n="ind6_title">Residential Communities</h3>
+            <p data-i18n="ind6_desc">HOA common areas, private roads, visitor parking, and community speed markings.</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== STATS ==================== -->
+    <section class="stats-section" id="stats">
+      <div class="stats-bar fade-in">
+        <div class="stat-item">
+          <h3>15+</h3>
+          <p data-i18n="stat1_label">Years Experience</p>
+        </div>
+        <div class="stat-item">
+          <h3>500+</h3>
+          <p data-i18n="stat2_label">Projects Completed</p>
+        </div>
+        <div class="stat-item">
+          <h3>50+</h3>
+          <p data-i18n="stat3_label">Cities Served</p>
+        </div>
+        <div class="stat-item">
+          <h3>100%</h3>
+          <p data-i18n="stat4_label">Compliance Rate</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== NEWSLETTER ==================== -->
+    <section class="newsletter" id="contact">
+      <h2 data-i18n="newsletter_title" style="margin-top: -40px;">დაგვიკავშირდით</h2>
+      <p data-i18n="newsletter_desc">მზად ვართ განვიხილოთ თქვენი პროექტი და შემოგთავაზოთ საგზაო მონიშვნისა და ინფრასტრუქტურის შესაბამისი გადაწყვეტა.</p>
+      <form class="newsletter-form" id="newsletterForm">
+        <input type="text" data-i18n-placeholder="contact_name_placeholder" placeholder="თქვენი სახელი" required aria-label="Name">
+        <input type="email" data-i18n-placeholder="newsletter_placeholder" placeholder="ელფოსტა" required aria-label="Email address">
+        <input type="tel" data-i18n-placeholder="contact_phone_placeholder" placeholder="ტელეფონის ნომერი" required aria-label="Phone number">
+        <button type="submit" data-i18n="newsletter_btn">გაგზავნა</button>
+      </form>
+    </section>
+
+  </main>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer>
+    <div class="footer-grid">
+
+      <div class="footer-col">
+        <h4>Pro Line – Road Marking & Infrastructure</h4>
+        <p data-i18n="footer_desc">შპს „პრო ლაინი" ახორციელებს გზების ჰორიზონტალურ მონიშვნას, პარკირების სივრცეების მოწყობას, საგზაო ნიშნების დამზადებასა და მონტაჟს საქართველოს მასშტაბით.</p>
+      </div>
+
+      <div class="footer-col">
+        <h4 data-i18n="footer_services_title">სერვისები</h4>
+        <ul>
+          <li><a href="#services" data-i18n="footer_svc1">გზის მონიშვნა</a></li>
+          <li><a href="#services" data-i18n="footer_svc2">პარკირების მონიშვნა</a></li>
+          <li><a href="#services" data-i18n="footer_svc3">საგზაო ნიშნები</a></li>
+          <li><a href="#services" data-i18n="footer_svc4">უსაფრთხოების ინფრასტრუქტურა</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4 data-i18n="footer_quicklinks">სწრაფი მენიუ</h4>
+        <ul>
+          <li><a href="#hero" data-i18n="footer_nav_home">მთავარი</a></li>
+          <li><a href="#about" data-i18n="nav_about">ჩვენს შესახებ</a></li>
+          <li><a href="#services" data-i18n="nav_services">სერვისები</a></li>
+          <li><a href="#projects" data-i18n="nav_projects">პროექტები</a></li>
+          <li><a href="#contact" data-i18n="nav_contact">კონტაქტი</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4 data-i18n="footer_contact_title">კონტაქტი</h4>
+        <p data-i18n="footer_location">&#128205; საქართველო</p>
+        <p data-i18n="footer_phone">&#128222; Sales: +995 558 35 24 08</p>
+        <p data-i18n="footer_email">&#9993; info@proline.ge</p>
+        <div class="footer-social" style="margin-top: 12px;">
+          <a href="https://www.linkedin.com/company/pro-line21/posts/?feedView=all" target="_blank" aria-label="LinkedIn">in</a>
+        </div>
+      </div>
+
+    </div>
+    <div class="footer-bottom" data-i18n="footer_copyright">
+      &copy; 2026 Pro Line. All rights reserved.
+    </div>
+  </footer>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" aria-label="Close">&times;</button>
+    <button class="lightbox-nav prev" aria-label="Previous">&#10094;</button>
+    <img src="" alt="Full size preview" id="lightboxImg">
+    <button class="lightbox-nav next" aria-label="Next">&#10095;</button>
+    <div class="lightbox-counter" id="lightboxCounter"></div>
+  </div>
+
+  <script>
+    /* ========== TRANSLATIONS ========== */
+    const translations = {
+      ka: {
+        // Nav
+        nav_services: 'სერვისები',
+        nav_industries: 'ინდუსტრიები',
+        nav_about: 'ჩვენ შესახებ',
+        nav_projects: 'პროექტები',
+        nav_contact: 'კონტაქტი',
+
+        // Hero
+        hero_title: 'გზების განსაზღვრა,<br>ქალაქების <span>წარმართვა</span>',
+        hero_desc: 'ზუსტი გზის მარკირება, პროფესიონალური ნიშნების მონტაჟი და ინფრასტრუქტურული გადაწყვეტილებები, რომლებიც საზოგადოებას უსაფრთხოდ ინარჩუნებს და მოძრაობას აუმჯობესებს.',
+        hero_desc_paragraph: 'შპს „პრო ლაინი" 2019 წლიდან ოპერირებს საქართველოს ბაზარზე და ახორციელებს საგზაო ინფრასტრუქტურის პროექტებს თანამედროვე ტექნოლოგიებისა და მაღალი ხარისხის მასალების გამოყენებით.',
+        rotate1: 'ჰორიზონტალური საგზაო მონიშვნა',
+        rotate2: 'თერმოპლასტიკური მონიშვნა',
+        rotate3: 'პარკირების მონიშვნა',
+        rotate4: 'საგზაო ნიშნების მონტაჟი',
+        rotate5: 'უსაფრთხოების ინფრასტრუქტურა',
+
+        // About Us
+        about_label: 'ჩვენ შესახებ',
+        about_title: 'ჩვენ შესახებ',
+        about_intro: 'შპს „პრო ლაინი" 2019 წლიდან აქტიურად ოპერირებს საქართველოს ბაზარზე და სპეციალიზდება საგზაო მოძრაობის უსაფრთხოების სისტემებსა და ინფრასტრუქტურულ პროექტებში.',
+        about_activity: 'კომპანიის ძირითადი საქმიანობის მიმართულებებია გზების ჰორიზონტალური მონიშვნა, პარკირების სივრცეების მოწყობა, საგზაო ნიშნების დამზადება და მონტაჟი, ასევე საგზაო ინფრასტრუქტურის პროექტირება.',
+        about_quality: 'კომპანია მუდმივად მუშაობს თანამედროვე სტანდარტების დანერგვაზე და მომხმარებლებისთვის მაღალი ხარისხის მომსახურების შეთავაზებაზე.',
+        about_partners: 'ჩვენი პარტნიორი ქვეყნები არიან: საფრანგეთი, ესპანეთი, თურქეთი, ბელარუსი და შვეიცარია. ევროპული გამოცდილების მქონე კომპანიებთან თანამშრომლობა გვაძლევს მნიშვნელოვან უპირატესობას, რომ ყველა პროექტი შესრულდეს უმაღლესი ხარისხის მასალებითა და თანამედროვე ტექნოლოგიების გამოყენებით.',
+        partner_france: '🇫🇷 საფრანგეთი',
+        partner_spain: '🇪🇸 ესპანეთი',
+        partner_turkey: '🇹🇷 თურქეთი',
+        partner_belarus: '🇧🇾 ბელარუსი',
+        partner_switzerland: '🇨🇭 შვეიცარია',
+
+        // Services
+        services_title: 'რას ვაკეთებთ',
+        services_subtitle: 'ყოვლისმომცველი გზის მარკირებისა და ნიშნების გადაწყვეტილებები, აგებული სიზუსტეზე, შესაბამისობასა და გამძლეობაზე.',
+        svc1_title: 'გზის მონიშვნა',
+        svc1_desc: 'გზების ჰორიზონტალური მონიშვნა თანამედროვე ტექნოლოგიებით, რაც უზრუნველყოფს მოძრაობის უსაფრთხოებასა და მონიშვნის გამძლეობას.',
+        svc2_title: 'პარკირების სივრცეების მოწყობა',
+        svc2_desc: 'პარკირების სივრცეების დაგეგმვა და მონიშვნა კომერციული, მუნიციპალური და კერძო ობიექტებისთვის.',
+        svc3_title: 'ნიშნების მონტაჟი',
+        svc3_desc: 'მაღალი რეფლექტირებადი მასალებით დამზადებული საგზაო ნიშნების მონტაჟი მოქმედი სტანდარტების შესაბამისად.',
+        svc4_title: 'ინფრასტრუქტურა და მოძრაობის მართვა',
+        svc4_desc: 'სიჩქარის შემზღუდავები, პარკირების შემზღუდავები და სხვა უსაფრთხოების ელემენტები გზისა და პარკირების სივრცეებისთვის.',
+
+        // Industries
+        industries_title: 'ინდუსტრიები, რომლებსაც ვემსახურებით',
+        industries_subtitle: 'ქალაქის ქუჩებიდან კამპუსის ტერიტორიებამდე, ჩვენ ვაწვდით მარკირებისა და ნიშნების გადაწყვეტილებებს მრავალფეროვან სექტორებში.',
+        ind1_title: 'მუნიციპალური / სამთავრობო',
+        ind1_desc: 'ქალაქის გზები, ავტომაგისტრალები და საჯარო ინფრასტრუქტურის პროექტები სრული მარეგულირებელი შესაბამისობით.',
+        ind2_title: 'კომერციული ობიექტები',
+        ind2_desc: 'საოფისე პარკები, ბიზნეს კომპლექსები და კორპორატიული კამპუსები პროფესიონალური დონის მარკირებით.',
+        ind3_title: 'საგანმანათლებლო კამპუსები',
+        ind3_desc: 'სასკოლო ზონები, საფეხმავლო გადასასვლელები, ავტობუსის ზოლები და ფეხით მოსიარულეთა უსაფრთხოების მარკირება სკოლებისა და უნივერსიტეტებისთვის.',
+        ind4_title: 'სამედიცინო დაწესებულებები',
+        ind4_desc: 'საავადმყოფოსა და კლინიკის პარკირება, საგანგებო წვდომის ზოლები და შეზღუდული შესაძლებლობების მქონე პირთათვის სამიმართულო ნიშნები.',
+        ind5_title: 'საცალო ვაჭრობა და სავაჭრო ცენტრები',
+        ind5_desc: 'მომხმარებლის პარკირება, დატვირთვის ზონები, კალათების ადგილები და სამიმართულო ნიშნები საცალო ობიექტებისთვის.',
+        ind6_title: 'საცხოვრებელი თემები',
+        ind6_desc: 'საერთო ტერიტორიები, კერძო გზები, სტუმრების პარკირება და თემის სიჩქარის მარკირება.',
+
+        // Stats
+        stat1_label: 'წლიანი გამოცდილება',
+        stat2_label: 'დასრულებული პროექტი',
+        stat3_label: 'მომსახურებული ქალაქი',
+        stat4_label: 'შესაბამისობის მაჩვენებელი',
+        stats_desc: 'Pro Line არის სანდო პარტნიორი გზის მარკირებისა და ინფრასტრუქტურის ნიშნების სფეროში 2010 წლიდან. ჩვენი სერტიფიცირებული პროფესიონალების გუნდი მუშაობს მუნიციპალიტეტებთან, დეველოპერებთან და ქონების მმართველებთან ერთად, რათა მიაწოდოს მარკირება და ნიშნები, რომლებიც აკმაყოფილებს სტანდარტებს, აძლიერებს საზოგადოებრივ უსაფრთხოებას და უძლებს ამინდისა და ინტენსიური მოძრაობის მოთხოვნებს.',
+
+        // Projects
+        projects_title: 'ჩვენი პროექტები',
+        projects_subtitle: 'შესრულებული სამუშაოები საქართველოს სხვადასხვა ქალაქში',
+        project1_name: 'ბათუმი',
+        project2_name: 'ზუგდიდი',
+        project3_name: 'მალე',
+
+        // Newsletter
+        newsletter_title: 'დაგვიკავშირდით',
+        newsletter_desc: 'მზად ვართ განვიხილოთ თქვენი პროექტი და შემოგთავაზოთ საგზაო მონიშვნისა და ინფრასტრუქტურის შესაბამისი გადაწყვეტა.',
+        contact_name_placeholder: 'თქვენი სახელი',
+        newsletter_placeholder: 'ელფოსტა',
+        contact_phone_placeholder: 'ტელეფონის ნომერი',
+        newsletter_btn: 'გაგზავნა',
+        newsletter_alert: 'გმადლობთ! თქვენი შეტყობინება გაგზავნილია.',
+
+        // Footer
+        footer_desc: 'შპს „პრო ლაინი" ახორციელებს გზების ჰორიზონტალურ მონიშვნას, პარკირების სივრცეების მოწყობას, საგზაო ნიშნების დამზადებასა და მონტაჟს საქართველოს მასშტაბით.',
+        footer_quicklinks: 'სწრაფი მენიუ',
+        footer_nav_home: 'მთავარი',
+        footer_services_title: 'სერვისები',
+        footer_svc1: 'გზის მონიშვნა',
+        footer_svc2: 'პარკირების მონიშვნა',
+        footer_svc3: 'საგზაო ნიშნები',
+        footer_svc4: 'უსაფრთხოების ინფრასტრუქტურა',
+        footer_contact_title: 'კონტაქტი',
+        footer_location: '&#128205; საქართველო',
+        footer_phone: '&#128222; Sales: +995 558 35 24 08',
+        footer_email: '&#9993; info@proline.ge',
+        footer_copyright: '&copy; 2026 Pro Line. ყველა უფლება დაცულია.',
+
+        // Page title
+        page_title: 'Pro Line — გზების განსაზღვრა, ქალაქების წარმართვა'
+      },
+
+      en: {
+        // Nav
+        nav_services: 'Services',
+        nav_industries: 'Industries',
+        nav_about: 'About Us',
+        nav_projects: 'Projects',
+        nav_contact: 'Contact',
+
+        // Hero
+        hero_title: 'Defining Roads,<br>Guiding <span>Cities</span>',
+        hero_desc: 'Precision road markings, expert signage installation, and infrastructure solutions that keep communities safe and traffic flowing.',
+        hero_desc_paragraph: 'LLC "Pro Line" has been operating in the Georgian market since 2019, implementing road infrastructure projects using modern technologies and high-quality materials.',
+        rotate1: 'Horizontal Road Marking',
+        rotate2: 'Thermoplastic Marking',
+        rotate3: 'Parking Marking',
+        rotate4: 'Road Sign Installation',
+        rotate5: 'Safety Infrastructure',
+
+        // About Us
+        about_label: 'About Us',
+        about_title: 'About Us',
+        about_intro: 'LLC "Pro Line" has been actively operating in the Georgian market since 2019, specializing in road traffic safety systems and infrastructure projects.',
+        about_activity: 'The company\'s main areas of activity include horizontal road marking, parking space installation, road sign manufacturing and installation, as well as road infrastructure design.',
+        about_quality: 'The company constantly works on implementing modern standards and offering high-quality services to customers.',
+        about_partners: 'Our partner countries are: France, Spain, Turkey, Belarus, and Switzerland. Collaboration with companies with European experience gives us a significant advantage, ensuring that all projects are completed with the highest quality materials and modern technologies.',
+        partner_france: '🇫🇷 France',
+        partner_spain: '🇪🇸 Spain',
+        partner_turkey: '🇹🇷 Turkey',
+        partner_belarus: '🇧🇾 Belarus',
+        partner_switzerland: '🇨🇭 Switzerland',
+
+        // Services
+        services_title: 'What We Do',
+        services_subtitle: 'Comprehensive road marking and signage solutions built on precision, compliance, and durability.',
+        svc1_title: 'Road Marking',
+        svc1_desc: 'Horizontal road marking with modern technologies, ensuring traffic safety and marking durability.',
+        svc2_title: 'Parking Space Installation',
+        svc2_desc: 'Planning and marking of parking spaces for commercial, municipal, and private facilities.',
+        svc3_title: 'Sign Installation',
+        svc3_desc: 'Installation of road signs made with high-reflective materials in accordance with current standards.',
+        svc4_title: 'Infrastructure & Traffic Management',
+        svc4_desc: 'Speed bumps, parking barriers, and other safety elements for road and parking spaces.',
+
+        // Industries
+        industries_title: 'Industries We Serve',
+        industries_subtitle: 'From city streets to campus grounds, we deliver marking and signage solutions across diverse sectors.',
+        ind1_title: 'Municipal / Government',
+        ind1_desc: 'City roads, highways, and public infrastructure projects with full regulatory compliance.',
+        ind2_title: 'Commercial Properties',
+        ind2_desc: 'Office parks, business complexes, and corporate campuses with professional-grade markings.',
+        ind3_title: 'Educational Campuses',
+        ind3_desc: 'School zones, crosswalks, bus lanes, and pedestrian safety markings for K-12 and universities.',
+        ind4_title: 'Healthcare Facilities',
+        ind4_desc: 'Hospital and clinic parking, emergency access lanes, and ADA-compliant wayfinding signage.',
+        ind5_title: 'Retail & Shopping Centers',
+        ind5_desc: 'Customer parking, loading zones, cart corrals, and directional signage for retail properties.',
+        ind6_title: 'Residential Communities',
+        ind6_desc: 'HOA common areas, private roads, visitor parking, and community speed markings.',
+
+        // Stats
+        stat1_label: 'Years Experience',
+        stat2_label: 'Projects Completed',
+        stat3_label: 'Cities Served',
+        stat4_label: 'Compliance Rate',
+        stats_desc: 'Pro Line has been a trusted partner in road marking and infrastructure signage since 2010. Our team of certified professionals works alongside municipalities, developers, and property managers to deliver markings and signs that meet MUTCD standards, enhance public safety, and withstand the demands of weather and heavy traffic. We combine proven methods with modern materials to keep your roads clear, your parking lots organized, and your communities navigable.',
+
+        // Projects
+        projects_title: 'Our Projects',
+        projects_subtitle: 'Cities and regions where we have delivered road marking and signage solutions.',
+        project1_name: 'Batumi',
+        project2_name: 'Zugdidi',
+        project3_name: 'Coming Soon',
+
+        // Newsletter
+        newsletter_title: 'Contact Us',
+        newsletter_desc: 'We are ready to discuss your project and offer the right road marking and infrastructure solution.',
+        contact_name_placeholder: 'Your name',
+        newsletter_placeholder: 'Email',
+        contact_phone_placeholder: 'Phone number',
+        newsletter_btn: 'Send',
+        newsletter_alert: 'Thank you! Your message has been sent.',
+
+        // Footer
+        footer_desc: 'LLC "Pro Line" carries out horizontal road marking, parking space installation, road sign manufacturing and installation across Georgia.',
+        footer_quicklinks: 'Quick Menu',
+        footer_nav_home: 'Home',
+        footer_services_title: 'Services',
+        footer_svc1: 'Road Marking',
+        footer_svc2: 'Parking Marking',
+        footer_svc3: 'Road Signs',
+        footer_svc4: 'Safety Infrastructure',
+        footer_contact_title: 'Contact',
+        footer_location: '&#128205; Georgia',
+        footer_phone: '&#128222; Sales: +995 558 35 24 08',
+        footer_email: '&#9993; info@proline.ge',
+        footer_copyright: '&copy; 2026 Pro Line. All rights reserved.',
+
+        // Page title
+        page_title: 'Pro Line — Defining Roads, Guiding Cities'
+      }
+    };
+
+    let currentLang = 'ka';
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      const t = translations[lang];
+
+      // Update all data-i18n elements (textContent via innerHTML for HTML entities)
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (t[key] !== undefined) {
+          el.innerHTML = t[key];
+        }
+      });
+
+      // Update all data-i18n-html elements (innerHTML with rich markup)
+      document.querySelectorAll('[data-i18n-html]').forEach(el => {
+        const key = el.getAttribute('data-i18n-html');
+        if (t[key] !== undefined) {
+          el.innerHTML = t[key];
+        }
+      });
+
+      // Update placeholders
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (t[key] !== undefined) {
+          el.placeholder = t[key];
+        }
+      });
+
+      // Update page title and lang attribute
+      document.title = t.page_title;
+      document.documentElement.lang = lang === 'ka' ? 'ka' : 'en';
+
+      // Update switcher active state
+      document.getElementById('langGeo').classList.toggle('active', lang === 'ka');
+      document.getElementById('langEng').classList.toggle('active', lang === 'en');
+    }
+
+    // Language switcher buttons
+    document.getElementById('langGeo').addEventListener('click', () => setLanguage('ka'));
+    document.getElementById('langEng').addEventListener('click', () => setLanguage('en'));
+
+    // Apply default language on load
+    setLanguage('ka');
+
+    // Newsletter form
+    document.getElementById('newsletterForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert(translations[currentLang].newsletter_alert);
+    });
+
+    // Mobile hamburger toggle
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.getElementById('navLinks');
+
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('active');
+      navLinks.classList.toggle('open');
+    });
+
+    // Close mobile nav when a link is clicked
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        hamburger.classList.remove('active');
+        navLinks.classList.remove('open');
+      });
+    });
+
+    // Seamless video loop via crossfade between two copies
+    (function() {
+      const vidA = document.getElementById('vidA');
+      const vidB = document.getElementById('vidB');
+      const FADE = 1.5; // seconds — matches CSS transition duration
+      let active = vidA;
+      let standby = vidB;
+
+      function swap() {
+        const next = standby;
+        next.currentTime = 0;
+        next.play();
+        next.classList.remove('hidden');
+        active.classList.add('hidden');
+        standby = active;
+        active = next;
+      }
+
+      function watch(vid) {
+        vid.addEventListener('timeupdate', function() {
+          if (vid === active && vid.duration && vid.currentTime >= vid.duration - FADE) {
+            swap();
+          }
+        });
+      }
+
+      vidA.play();
+      watch(vidA);
+      watch(vidB);
+    })();
+
+    // Fade-in on scroll (Intersection Observer)
+    const faders = document.querySelectorAll('.fade-in');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+
+    faders.forEach(el => observer.observe(el));
+
+    // ========== PROJECT CAROUSELS (swipe + buttons + dots) ==========
+    document.querySelectorAll('[data-carousel]').forEach(carousel => {
+      const track = carousel.querySelector('.carousel-track');
+      const images = track.querySelectorAll('img');
+      const dots = carousel.querySelectorAll('.carousel-dots span');
+      const prevBtn = carousel.querySelector('.carousel-btn.prev');
+      const nextBtn = carousel.querySelector('.carousel-btn.next');
+      const total = images.length;
+      let current = 0;
+
+      function goTo(index) {
+        if (index < 0) index = total - 1;
+        if (index >= total) index = 0;
+        current = index;
+        track.style.transform = `translateX(-${current * 100}%)`;
+        dots.forEach((d, i) => d.classList.toggle('active', i === current));
+      }
+
+      if (prevBtn) prevBtn.addEventListener('click', () => goTo(current - 1));
+      if (nextBtn) nextBtn.addEventListener('click', () => goTo(current + 1));
+
+      // Touch / pointer swipe
+      let startX = 0;
+      let isDragging = false;
+      let dragDistance = 0;
+
+      carousel.addEventListener('pointerdown', e => {
+        startX = e.clientX;
+        dragDistance = 0;
+        isDragging = true;
+        track.style.transition = 'none';
+      });
+
+      carousel.addEventListener('pointermove', e => {
+        if (!isDragging) return;
+        const diff = e.clientX - startX;
+        dragDistance = Math.abs(diff);
+        const offset = -current * 100 + (diff / carousel.offsetWidth) * 100;
+        track.style.transform = `translateX(${offset}%)`;
+      });
+
+      carousel.addEventListener('pointerup', e => {
+        if (!isDragging) return;
+        isDragging = false;
+        track.style.transition = 'transform 0.35s ease';
+        const diff = e.clientX - startX;
+        const threshold = carousel.offsetWidth * 0.2;
+        if (diff < -threshold) goTo(current + 1);
+        else if (diff > threshold) goTo(current - 1);
+        else goTo(current);
+      });
+
+      carousel.addEventListener('pointerleave', () => {
+        if (isDragging) {
+          isDragging = false;
+          track.style.transition = 'transform 0.35s ease';
+          goTo(current);
+        }
+      });
+
+      // Click to open lightbox (only if not a swipe)
+      images.forEach((img, i) => {
+        img.style.cursor = 'pointer';
+        img.addEventListener('click', () => {
+          if (dragDistance < 6) {
+            const srcs = Array.from(images).map(im => im.src);
+            openLightbox(srcs, i);
+          }
+        });
+      });
+    });
+
+    // ========== LIGHTBOX ==========
+    (function() {
+      const lb = document.getElementById('lightbox');
+      const lbImg = document.getElementById('lightboxImg');
+      const lbCounter = document.getElementById('lightboxCounter');
+      const closeBtn = lb.querySelector('.lightbox-close');
+      const prevBtn = lb.querySelector('.lightbox-nav.prev');
+      const nextBtn = lb.querySelector('.lightbox-nav.next');
+      let images = [];
+      let idx = 0;
+
+      function show() {
+        lbImg.src = images[idx];
+        lbCounter.textContent = (idx + 1) + ' / ' + images.length;
+      }
+
+      window.openLightbox = function(srcs, startIndex) {
+        images = srcs;
+        idx = startIndex;
+        show();
+        lb.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      };
+
+      function close() {
+        lb.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+
+      closeBtn.addEventListener('click', close);
+
+      lb.addEventListener('click', e => {
+        if (e.target === lb) close();
+      });
+
+      prevBtn.addEventListener('click', () => {
+        idx = (idx - 1 + images.length) % images.length;
+        show();
+      });
+
+      nextBtn.addEventListener('click', () => {
+        idx = (idx + 1) % images.length;
+        show();
+      });
+
+      document.addEventListener('keydown', e => {
+        if (!lb.classList.contains('open')) return;
+        if (e.key === 'Escape') close();
+        if (e.key === 'ArrowLeft') { idx = (idx - 1 + images.length) % images.length; show(); }
+        if (e.key === 'ArrowRight') { idx = (idx + 1) % images.length; show(); }
+      });
+    })();
+
+    // ========== HERO ROTATING TEXT ==========
+    (function() {
+      const keys = ['rotate1', 'rotate2', 'rotate3', 'rotate4', 'rotate5'];
+      const el = document.querySelector('#heroRotating .rotate-word');
+      let idx = 0;
+
+      setInterval(() => {
+        el.classList.add('fade-out');
+        setTimeout(() => {
+          idx = (idx + 1) % keys.length;
+          el.textContent = translations[currentLang][keys[idx]];
+          el.classList.remove('fade-out');
+          el.classList.add('fade-in-up');
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              el.classList.remove('fade-in-up');
+            });
+          });
+        }, 600);
+      }, 3000);
+    })();
+  </script>
+
+</body>
+</html>
